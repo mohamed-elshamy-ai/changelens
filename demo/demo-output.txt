@@ -1,0 +1,39 @@
+$ changelens demo/Contract_v1.txt demo/Contract_v2.txt
+CHANGE REPORT
+
+Contract_v1.txt  ->  Contract_v2.txt
+
+6 change(s) detected
+
+[HIGH] Obligation wording changed  (line 1)
+    Old: 1. Services. The Contractor shall deliver the website by 1 March 2027.
+    New: 1. Services. The Contractor may deliver the website by 1 March 2027.
+
+[HIGH] Number changed  (line 2)
+    Old: 2. Payment. The Client shall pay each invoice within 30 days.
+    New: 2. Payment. The Client shall pay each invoice within 15 days.
+
+[HIGH] New text added (touches: price, penalty, cancellation)  (line 7)
+    New: 7. Cancellation. If the Client cancels, a penalty of 20% of the contract price applies.
+
+[MEDIUM] Text removed  (line 4)
+    Old: 4. Scope. The Contractor will build five pages and a contact form, designed with the Client's brand colors and tested on mobile.
+
+[MEDIUM] New text added  (line 4)
+    New: 4. Scope. Pages and forms are agreed in a separate document and the Contractor builds whatever is listed there, in a design agreed later.
+
+[FORMAT] Formatting, case or punctuation only  (line 3)
+    Old: 3. Confidentiality. Both parties keep project information confidential.
+    New: 3. CONFIDENTIALITY. Both parties keep project information confidential.
+
+Severity is a rule-based guess from patterns, not legal or professional advice.
+
+$ changelens ... --important
+CHANGE REPORT
+
+Contract_v1.txt  ->  Contract_v2.txt
+
+5 change(s) detected
+
+[HIGH] Obligation wording changed  (line 1)
+    Old: 1. Services. The Contractor shall deliver the website by 1 March 2027.
