@@ -32,5 +32,15 @@ def has_important_word(text):
     return [w for w, rx in zip(IMPORTANT_WORDS, _word_res) if rx.search(text)]
 
 
+WORD_NUMBERS = {w: str(i) for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split())}
+WORD_NUMBERS.update({"thirty": "30", "forty": "40", "fifty": "50", "sixty": "60", "ninety": "90", "hundred": "100",
+                     "once": "1", "twice": "2"})
+_WORD_NUM_RE = re.compile(r"(?<!\w)(" + "|".join(WORD_NUMBERS) + r")(?!\w)", re.I)
+
+
 def numbers(text):
-    return [n.replace(",", "") for n in NUMBER.findall(normalize_digits(text))]
+    """Numbers in the text, digits first then number words (so 'three' and '3' are the same)."""
+    nums = [n.replace(",", "") for n in NUMBER.findall(normalize_digits(text))]
+    nums += [WORD_NUMBERS[w.lower()] for w in _WORD_NUM_RE.findall(text)]
+    return nums

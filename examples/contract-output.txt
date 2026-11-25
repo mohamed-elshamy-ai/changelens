@@ -1,0 +1,23 @@
+$ changelens examples/contract_v1.docx examples/contract_v2.docx
+CHANGE REPORT
+
+contract_v1.docx  ->  contract_v2.docx
+
+4 change(s) detected
+
+[HIGH] Number changed  (paragraph 5)
+    Old: 4. Payment terms. Each invoice is due within 30 days of the invoice date.
+    New: 4. Payment terms. Each invoice is due within 15 days of the invoice date.
+
+[HIGH] Number changed  (paragraph 6)
+    Old: 5. Revisions. The Client may request up to three rounds of revisions at no extra cost.
+    New: 5. Revisions. The Client may request up to one round of revisions at no extra cost.
+
+[HIGH] New text added (touches: fee, penalty, cancellation)  (paragraph 10)
+    New: 9. Cancellation. If the Client cancels after work has started, a penalty of 30% of the total fee applies.
+
+[MEDIUM] Moved from paragraph 7 to paragraph 8 and edited: touches: fees, payment  (paragraph 8)
+    Old: 6. Ownership. The Client owns the final website after full payment.
+    New: 6. Ownership. The Freelancer owns the final website until the Client has paid all invoices and any late fees.
+
+Severity is a rule-based guess from patterns, not legal or professional advice.

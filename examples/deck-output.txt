@@ -1,0 +1,18 @@
+$ changelens examples/deck_v1.pptx examples/deck_v2.pptx
+CHANGE REPORT
+
+deck_v1.pptx  ->  deck_v2.pptx
+
+3 change(s) detected
+
+[HIGH] Number changed  (slide 1)
+    Old: Total price: EGP 20,000
+    New: Total price: EGP 26,000
+
+[HIGH] New text added (touches: warranty)  (slide 1 notes)
+    New: Warranty is not included
+
+[MEDIUM] Text removed (touches: warranty)  (slide 1 notes)
+    Old: Mention the warranty period
+
+Severity is a rule-based guess from patterns, not legal or professional advice.

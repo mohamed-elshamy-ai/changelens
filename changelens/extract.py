@@ -1,7 +1,7 @@
 """Turn a file into a list of (location, text) blocks."""
 from pathlib import Path
 
-SUPPORTED = (".txt", ".md", ".docx", ".pdf", ".xlsx")
+SUPPORTED = (".txt", ".md", ".docx", ".pdf", ".xlsx", ".pptx")
 
 
 def extract(path):
@@ -19,6 +19,26 @@ def extract(path):
                 cells = [c.text.strip() for c in row.cells]
                 if any(cells):
                     out.append((f"table {ti + 1} row {ri + 1}", " | ".join(cells)))
+        return "text", out
+    if ext == ".pptx":
+        from pptx import Presentation
+        out = []
+        for n, slide in enumerate(Presentation(path).slides, 1):
+            for shape in slide.shapes:
+                if shape.has_text_frame:
+                    for para in shape.text_frame.paragraphs:
+                        t = "".join(r.text for r in para.runs).strip()
+                        if t:
+                            out.append((f"slide {n}", t))
+                if getattr(shape, "has_table", False) and shape.has_table:
+                    for row in shape.table.rows:
+                        cells = [c.text.strip() for c in row.cells]
+                        if any(cells):
+                            out.append((f"slide {n} table", " | ".join(cells)))
+            if slide.has_notes_slide:
+                for t in slide.notes_slide.notes_text_frame.text.splitlines():
+                    if t.strip():
+                        out.append((f"slide {n} notes", t.strip()))
         return "text", out
     if ext == ".pdf":
         import pymupdf as fitz

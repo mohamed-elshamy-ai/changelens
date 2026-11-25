@@ -113,3 +113,48 @@ def test_mixed_kinds_error(tmp_path):
 
 def test_unsupported(tmp_path):
     assert main([str(tmp_path / "a.zip"), str(tmp_path / "b.zip")]) == 3
+
+
+def test_moved_paragraph_is_one_change(tmp_path):
+    a = "A. Intro text about the project.\nB. Payment is due within 30 days of the invoice.\nC. Closing remarks and signatures."
+    b = "A. Intro text about the project.\nC. Closing remarks and signatures.\nB. Payment is due within 30 days of the invoice."
+    ch = compare(write(tmp_path / "a.txt", a), write(tmp_path / "b.txt", b))
+    moved = [c for c in ch if c.kind == "moved"]
+    assert len(moved) == 1 and not [c for c in ch if c.kind in ("added", "removed")]
+    assert moved[0].severity == Severity.LOW
+
+
+def test_moved_and_edited_keeps_severity(tmp_path):
+    a = "Intro.\nPayment is due within 30 days of the invoice date.\nEnd."
+    b = "Intro.\nEnd.\nPayment is due within 15 days of the invoice date."
+    ch = compare(write(tmp_path / "a.txt", a), write(tmp_path / "b.txt", b))
+    mv = [c for c in ch if c.kind == "moved"]
+    assert mv and mv[0].severity == Severity.HIGH
+
+
+def test_pptx(tmp_path):
+    from pptx import Presentation
+    for name, price in (("a", "30 days"), ("b", "15 days")):
+        prs = Presentation()
+        s = prs.slides.add_slide(prs.slide_layouts[1])
+        s.shapes.title.text = "Terms"
+        s.placeholders[1].text = f"Payment within {price}"
+        s.notes_slide.notes_text_frame.text = "Speaker note stays"
+        prs.save(tmp_path / f"{name}.pptx")
+    ch = compare(str(tmp_path / "a.pptx"), str(tmp_path / "b.pptx"))
+    assert len(ch) == 1 and ch[0].severity == Severity.HIGH and ch[0].location == "slide 1"
+
+
+def test_number_words_equal_digits(tmp_path):
+    a = write(tmp_path / "a.txt", "The Client may request up to three rounds of revisions.")
+    b = write(tmp_path / "b.txt", "The Client may request up to one round of revisions.")
+    assert compare(a, b)[0].severity == Severity.HIGH
+    c = write(tmp_path / "c.txt", "The Client may request up to 3 rounds of revisions.")
+    assert all(x.severity < Severity.HIGH for x in compare(a, c))  # three == 3, only the wording differs
+
+
+def test_rewritten_clause_is_paired_by_label(tmp_path):
+    a = write(tmp_path / "a.txt", "6. Ownership. The Client owns the final website after full payment.")
+    b = write(tmp_path / "b.txt", "6. Ownership. The Freelancer keeps all rights until every invoice and late fee is settled.")
+    ch = compare(a, b)
+    assert len(ch) == 1 and ch[0].kind == "modified"

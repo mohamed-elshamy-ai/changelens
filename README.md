@@ -10,7 +10,7 @@ Runs offline. No AI model: severity comes from readable rules in [`changelens/ru
 
 ## Supported files
 
-`.txt` `.md` `.docx` `.pdf` `.xlsx`. Both files must be the same family (two text documents, or two spreadsheets).
+`.txt` `.md` `.docx` `.pdf` `.xlsx` `.pptx` (slide text, tables and speaker notes). Both files must be the same family (two text documents, or two spreadsheets).
 
 ## Install and use
 
@@ -42,6 +42,42 @@ Real output from [`demo/`](demo/) (more in `demo/demo-output.txt`):
     New: 7. Cancellation. If the Client cancels, a penalty of 20% of the contract price applies.
 ```
 
+## Worked examples
+
+Sample input files and the real output they produce are in [`examples/`](examples/). Rebuild them with `python examples/make_examples.py && python examples/run_examples.py`.
+
+**1. A freelance contract (Word).** `contract_v1.docx` vs `contract_v2.docx`:
+
+```
+changelens examples/contract_v1.docx examples/contract_v2.docx
+```
+```
+[HIGH] Number changed  (paragraph 5)
+    Old: 4. Payment terms. Each invoice is due within 30 days of the invoice date.
+    New: 4. Payment terms. Each invoice is due within 15 days of the invoice date.
+
+[HIGH] Number changed  (paragraph 6)
+    Old: 5. Revisions. The Client may request up to three rounds of revisions at no extra cost.
+    New: 5. Revisions. The Client may request up to one round of revisions at no extra cost.
+
+[HIGH] New text added (touches: fee, penalty, cancellation)  (paragraph 10)
+    New: 9. Cancellation. If the Client cancels after work has started, a penalty of 30% of the total fee applies.
+
+[MEDIUM] Moved from paragraph 7 to paragraph 8 and edited: touches: fees, payment  (paragraph 8)
+    Old: 6. Ownership. The Client owns the final website after full payment.
+    New: 6. Ownership. The Freelancer owns the final website until the Client has paid all invoices and any late fees.
+```
+
+"three rounds" to "one round" is caught because number words count as numbers. The ownership clause moved down and was rewritten, and it is reported as one change, not a removal plus an addition.
+
+**2. A budget (Excel)**, cell by cell: `Budget!B2` 4000 to 5200 (HIGH), the total `Budget!B5` 5700 to 7500 (HIGH), and a new Insurance row. See [`examples/budget-output.txt`](examples/budget-output.txt).
+
+**3. A pitch deck (PowerPoint).** Price on slide 1 went from EGP 20,000 to EGP 26,000 (HIGH) and the speaker note changed from "Mention the warranty period" to "Warranty is not included". See [`examples/deck-output.txt`](examples/deck-output.txt).
+
+**4. Arabic text.** `٣٠` vs `١٥` digits and a new penalty clause (`غرامة`) are caught. See [`examples/arabic-output.txt`](examples/arabic-output.txt).
+
+![contract report](examples/contract-report.png)
+
 ## How it works
 
 1. **Extract** the text: paragraphs and table rows for Word, text blocks per page for PDF, one entry per cell for Excel.
@@ -49,6 +85,7 @@ Real output from [`demo/`](demo/) (more in `demo/demo-output.txt`):
 3. **Judge** each difference with rules:
    - a number, amount or percentage changed (Arabic digits count as the same numbers): HIGH
    - an obligation word changed, such as `shall` to `may`: HIGH
+   - number words count as numbers ("three" equals 3)
    - a negation was added or removed: HIGH
    - a new or removed clause mentioning payment, penalty, termination, liability and similar words: HIGH or MEDIUM
    - most of a block was rewritten: MEDIUM
@@ -62,9 +99,9 @@ Real output from [`demo/`](demo/) (more in `demo/demo-output.txt`):
 ## Limits
 
 - Severity is a guess from patterns. It can miss an important change and can rate a harmless one HIGH. It is not legal advice. Read the HIGH items yourself.
-- Moved paragraphs show up as one removed and one added block.
+- Moved paragraphs are detected when the text is nearly identical (85% similar) or the clause label (such as "6. Ownership") matches. A paragraph that was moved and heavily rewritten with no matching label still shows as one removed and one added block.
 - PDF comparison relies on extractable text. Scanned PDFs and images (OCR) are not supported yet.
-- PowerPoint is not supported yet. Word comparison ignores headers, footers, text boxes and tracked-change markup.
+- PowerPoint compares slide text, tables and notes, not images or charts. Word comparison ignores headers, footers, text boxes and tracked-change markup.
 - Excel: only cell values and formulas as text are compared, not formatting, charts or hidden sheets.
 - The keyword lists cover English and some Arabic. Other languages only get the number and formatting checks.
 - There is no desktop window yet, only the CLI and HTML report.
@@ -77,7 +114,7 @@ pip install -e ".[dev]" && pytest
 
 ## Roadmap (not built)
 
-OCR for scanned documents, PowerPoint, desktop window, optional LLM explanation of changes.
+OCR for scanned documents, desktop window, optional LLM explanation of changes.
 
 ## License
 

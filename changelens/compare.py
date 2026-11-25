@@ -119,6 +119,12 @@ def _judge_block(kind, text, loc):
     return ch
 
 
+def _label(text):
+    """The clause label at the start of a block, such as '6. Ownership.' (used to pair rewritten clauses)."""
+    m = re.match(r"^(\d+(?:\.\d+)*\.?\s+[A-Za-z\u0600-\u06FF]+)", text)
+    return m.group(1).lower() if m else ""
+
+
 def _compare_text(a, b):
     out = []
     at, bt = [_norm(t) for _, t in a], [_norm(t) for _, t in b]
@@ -138,6 +144,10 @@ def _compare_text(a, b):
                 r = difflib.SequenceMatcher(None, at[i], bt[j], autojunk=False).ratio()
                 if r > best:
                     best, bj = r, j
+            if best < 0.5:
+                lab = _label(at[i])
+                bj = next((j for j in news if j not in used and lab and _label(bt[j]) == lab), None)
+                best = 0.5 if bj is not None else 0.0
             if bj is not None and best >= 0.5:
                 used.add(bj)
                 out.append((bj, _judge_modified(at[i], bt[bj], b[bj][0])))
@@ -147,7 +157,45 @@ def _compare_text(a, b):
             if j not in used:
                 out.append((j, _judge_block("added", bt[j], b[j][0])))
     out.sort(key=lambda t: t[0])
-    return [c for _, c in out]
+    return _merge_moves([c for _, c in out])
+
+
+def _merge_moves(changes):
+    """A removed block and an added block with (almost) the same text is a move, not two changes."""
+    removed = [c for c in changes if c.kind == "removed"]
+    added = [c for c in changes if c.kind == "added"]
+    used_add, drop = set(), set()
+    merged = {}
+    for r in removed:
+        best, bi = 0.0, None
+        for i, a in enumerate(added):
+            if i in used_add:
+                continue
+            ratio = difflib.SequenceMatcher(None, r.old, a.new, autojunk=False).ratio()
+            if ratio > best:
+                best, bi = ratio, i
+        if best < 0.85 and _label(r.old):
+            bi2 = next((i for i, a in enumerate(added) if i not in used_add and _label(a.new) == _label(r.old)), None)
+            if bi2 is not None:
+                bi, best = bi2, 0.85
+        if bi is not None and best >= 0.85:
+            a = added[bi]
+            used_add.add(bi)
+            drop.add(id(r)); drop.add(id(a))
+            if r.old == a.new:
+                mv = Change(Severity.LOW, "moved", f"Moved from {r.location} to {a.location}", a.location, r.old, "")
+            else:
+                inner = _judge_modified(r.old, a.new, a.location)
+                mv = Change(max(inner.severity, Severity.LOW) if inner.severity != Severity.FORMAT else Severity.LOW, "moved",
+                            f"Moved from {r.location} to {a.location} and edited: {inner.title.lower()}", a.location, r.old, a.new)
+            merged[id(a)] = mv
+    out = []
+    for c in changes:
+        if id(c) in merged:
+            out.append(merged[id(c)])
+        elif id(c) not in drop:
+            out.append(c)
+    return out
 
 
 def _compare_cells(a, b):

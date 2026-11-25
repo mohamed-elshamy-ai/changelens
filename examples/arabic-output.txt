@@ -1,0 +1,15 @@
+$ changelens examples/arabic_v1.txt examples/arabic_v2.txt
+CHANGE REPORT
+
+arabic_v1.txt  ->  arabic_v2.txt
+
+2 change(s) detected
+
+[HIGH] Number changed  (line 1)
+    Old: يجب على العميل سداد الفاتورة خلال 30 يوم.
+    New: يجب على العميل سداد الفاتورة خلال ١٥ يوم.
+
+[HIGH] New text added (touches: غرامة)  (line 3)
+    New: تطبق غرامة ٢٠٪ عند الإلغاء.
+
+Severity is a rule-based guess from patterns, not legal or professional advice.

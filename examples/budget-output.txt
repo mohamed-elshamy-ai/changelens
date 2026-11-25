@@ -1,0 +1,22 @@
+$ changelens examples/budget_v1.xlsx examples/budget_v2.xlsx
+CHANGE REPORT
+
+budget_v1.xlsx  ->  budget_v2.xlsx
+
+4 change(s) detected
+
+[HIGH] Number changed  (Budget!B2)
+    Old: 4000
+    New: 5200
+
+[HIGH] Number changed  (Budget!B5)
+    Old: 5700
+    New: 7500
+
+[MEDIUM] New text added  (Budget!B6)
+    New: 600
+
+[LOW] New text added  (Budget!A6)
+    New: Insurance
+
+Severity is a rule-based guess from patterns, not legal or professional advice.
