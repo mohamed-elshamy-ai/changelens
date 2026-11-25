@@ -8,6 +8,8 @@ Runs offline. No AI model: severity comes from readable rules in [`changelens/ru
 
 ![report](demo/report.png)
 
+**Live demo in your browser (works on phones):** https://mohamed-elshamy-ai.github.io/changelens/demo.html (plain text only, nothing is uploaded).
+
 ## Supported files
 
 `.txt` `.md` `.docx` `.pdf` `.xlsx` `.pptx` (slide text, tables and speaker notes). Both files must be the same family (two text documents, or two spreadsheets).
@@ -77,6 +79,18 @@ changelens examples/contract_v1.docx examples/contract_v2.docx
 **4. Arabic text.** `٣٠` vs `١٥` digits and a new penalty clause (`غرامة`) are caught. See [`examples/arabic-output.txt`](examples/arabic-output.txt).
 
 ![contract report](examples/contract-report.png)
+
+## Install on Windows, macOS and Linux
+
+Needs Python 3.9 or newer. On Windows install it from python.org and tick "Add python.exe to PATH".
+
+```bash
+# Windows (PowerShell):  py -m pip install git+https://github.com/mohamed-elshamy-ai/changelens
+# macOS:                 python3 -m pip install git+https://github.com/mohamed-elshamy-ai/changelens
+# Linux:                 python3 -m pip install --user git+https://github.com/mohamed-elshamy-ai/changelens
+```
+
+Tested on Linux only. Android: use the live demo in the phone browser (plain text only). Technical notes (architecture, algorithms, testing): [ARCHITECTURE.md](ARCHITECTURE.md). Website: https://mohamed-elshamy-ai.github.io/changelens/
 
 ## How it works
 

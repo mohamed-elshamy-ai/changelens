@@ -2,52 +2,107 @@
 <title>ChangeLens: Someone sent the updated version. See what actually changed.</title><meta name="description" content="Compare two versions of a contract or document and see which changes matter, with severity.">
 <meta property="og:title" content="ChangeLens"><meta property="og:description" content="Compare two versions of a contract or document and see which changes matter, with severity.">
 <style>
-:root{--bg:#0f1420;--card:#171e2e;--fg:#e8ecf4;--mut:#9aa6bd;--acc:#5b9dff;--acc2:#7ee0b5}
-*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg)}
-.wrap{max-width:880px;margin:0 auto;padding:0 20px}
-header.hero{padding:72px 0 40px;text-align:center;background:radial-gradient(900px 300px at 50% -50px,#24407a55,transparent)}
-h1{font-size:3rem;margin:0 0 8px;letter-spacing:-1px}.tag{color:var(--mut);font-size:1.25rem;margin:0 auto 28px;max-width:640px}
-.btn{display:inline-block;padding:11px 22px;border-radius:9px;background:var(--acc);color:#04122b;font-weight:600;text-decoration:none;margin:4px}
-.btn.alt{background:transparent;color:var(--fg);border:1px solid #34405c}
-section{padding:28px 0}h2{font-size:1.5rem;margin:0 0 14px}
-.card{background:var(--card);border-radius:12px;padding:18px 22px;margin:12px 0}
-pre{background:#0a0e17;border:1px solid #232c44;border-radius:10px;padding:16px;overflow:auto;font-size:.88rem;line-height:1.5}
-code{font-family:ui-monospace,Menlo,Consolas,monospace}
-ul{padding-left:1.2rem}li{margin:6px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-.mut{color:var(--mut)}.rtl{direction:rtl;text-align:right}img{max-width:100%;border-radius:10px;border:1px solid #232c44}
-footer{padding:40px 0 60px;color:var(--mut);text-align:center;font-size:.9rem}.warn{border-left:4px solid #d68910}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.65 var(--body);background:var(--bg);color:var(--fg)}
+.wrap{max-width:900px;margin:0 auto;padding:0 22px}
+a{color:var(--acc)}code,pre{font-family:ui-monospace,Menlo,Consolas,monospace}
+pre{background:var(--code);color:var(--codefg);border:1px solid var(--line);border-radius:var(--r);padding:16px;overflow:auto;font-size:.86rem;line-height:1.5}
+.btn{display:inline-block;padding:11px 22px;border-radius:var(--r);background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none;margin:4px 8px 4px 0}
+.btn.alt{background:transparent;color:var(--fg);border:1px solid var(--line)}
+section{padding:26px 0}h2{font-family:var(--head);font-size:1.5rem;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.grid .card{margin:0}
+.mut{color:var(--mut)}.rtl{direction:rtl;text-align:right}
+img.shot{max-width:100%;border-radius:var(--r);border:1px solid var(--line);margin:8px 0}
+.warn{border-left:5px solid var(--warn)}
+.os{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.os h3{margin:0 0 6px;font-size:1rem}.os pre{margin:6px 0}
+footer{padding:44px 0 60px;color:var(--mut);text-align:center;font-size:.9rem}
+footer img{border-radius:50%;border:2px solid var(--line);display:block;margin:0 auto 10px}
+.badge{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:99px;border:1px solid var(--line);color:var(--mut);margin-left:6px;vertical-align:middle}
+.ok{color:#2e9e5b}.no{color:#c0392b}
+
+:root{--bg:#fbfaf7;--fg:#1d2433;--mut:#6a7388;--card:#ffffff;--line:#e3e0d6;--acc:#1f4fd8;--accfg:#fff;--code:#f3f1ea;--codefg:#1d2433;--warn:#d68910;--r:10px;--body:system-ui,-apple-system,Segoe UI,sans-serif;--head:Georgia,'Times New Roman',serif}
+header.hero{padding:76px 0 36px;text-align:center;background:linear-gradient(90deg,#fdecea 0 50%,#e9f7ef 50% 100%)}
+h1{font-family:Georgia,serif;font-size:3.4rem;margin:0 0 6px;letter-spacing:-1px}.tag{font-size:1.2rem;color:#40485c;max-width:620px;margin:0 auto 22px}
+header.hero .btn.alt{background:#fff}
 </style></head><body>
 <header class="hero"><div class="wrap"><h1>ChangeLens</h1><p class="tag">Someone sent the updated version. See what actually changed.</p>
-<a class="btn" href="https://github.com/mohamed-elshamy-ai/changelens">View on GitHub</a><a class="btn alt" href="#install">Install</a>
-<p class="mut" style="margin-top:18px">Open source &middot; MIT license &middot; runs on your machine</p></div></header>
+<a class="btn" href="https://github.com/mohamed-elshamy-ai/changelens">View on GitHub</a><a class="btn alt" href="demo.html">Live demo</a><a class="btn alt" href="#install">Install</a>
+<p class="mut" style="margin-top:16px">Open source &middot; MIT license &middot; early release v0.1.0</p></div></header>
 <main class="wrap">
 <section><h2>What it does</h2><p>ChangeLens compares two versions of a document and reports each change with a severity and a reason, not a raw diff. A number that changed, a duty softened from shall to may, a new penalty clause: those are HIGH. A &quot;What&#x27;s Important?&quot; mode hides formatting-only changes.</p></section>
-<section><div class="grid"><div class="card"><b>Severity per change</b><div class="mut">HIGH, MEDIUM, LOW or FORMAT, with the reason.</div></div><div class="card"><b>What&#x27;s Important? mode</b><div class="mut">Hide formatting noise.</div></div><div class="card"><b>Word, PDF, Excel, text</b><div class="mut">Excel compared cell by cell.</div></div><div class="card"><b>HTML report</b><div class="mut">A styled report you can share.</div></div></div></section>
-<section><h2>Example</h2><pre><code>$ changelens demo/Contract_v1.txt demo/Contract_v2.txt
+<section><div class="grid"><div class="card"><b>Severity per change</b><div class="mut">HIGH, MEDIUM, LOW or FORMAT, with the reason.</div></div><div class="card"><b>Understands moves and number words</b><div class="mut">&#x27;three&#x27; equals 3, moved clauses are one change.</div></div><div class="card"><b>Word, PDF, Excel, PowerPoint, text</b><div class="mut">Excel cell by cell, slides with notes.</div></div><div class="card"><b>Arabic aware</b><div class="mut">Arabic digits and key Arabic legal words.</div></div></div></section>
+<section><h2>Examples</h2><h3>A freelance contract (Word): payment terms, revisions, new cancellation clause, rewritten ownership clause</h3><pre><code>$ changelens examples/contract_v1.docx examples/contract_v2.docx
 CHANGE REPORT
 
-Contract_v1.txt  -&gt;  Contract_v2.txt
+contract_v1.docx  -&gt;  contract_v2.docx
 
-6 change(s) detected
+4 change(s) detected
 
-[HIGH] Obligation wording changed  (line 1)
-    Old: 1. Services. The Contractor shall deliver the website by 1 March 2027.
-    New: 1. Services. The Contractor may deliver the website by 1 March 2027.
+[HIGH] Number changed  (paragraph 5)
+    Old: 4. Payment terms. Each invoice is due within 30 days of the invoice date.
+    New: 4. Payment terms. Each invoice is due within 15 days of the invoice date.
 
-[HIGH] Number changed  (line 2)
-    Old: 2. Payment. The Client shall pay each invoice within 30 days.
-    New: 2. Payment. The Client shall pay each invoice within 15 days.
+[HIGH] Number changed  (paragraph 6)
+    Old: 5. Revisions. The Client may request up to three rounds of revisions at no extra cost.
+    New: 5. Revisions. The Client may request up to one round of revisions at no extra cost.
 
-[HIGH] New text added (touches: price, penalty, cancellation)  (line 7)
-    New: 7. Cancellation. If the Client cancels, a penalty of 20% of the contract price applies.</code></pre></section>
-<section><img src="report.png" alt="ChangeLens output"></section>
-<section id="install"><h2>Install</h2><pre><code>git clone https://github.com/mohamed-elshamy-ai/changelens
-cd changelens
-pip install -e .
-changelens old.docx new.docx --important --html report.html</code></pre></section>
+[HIGH] New text added (touches: fee, penalty, cancellation)  (paragraph 10)
+    New: 9. Cancellation. If the Client cancels after work has started, a penalty of 30% of the total fee applies.
+
+[MEDIUM] Moved from paragraph 7 to paragraph 8 and edited: touches: fees, payment  (paragraph 8)
+    Old: 6. Ownership. The Client owns the final website after full payment.
+    New: 6. Ownership. The Freelancer owns the final website until the Client has paid all invoices and any late fees.</code></pre><h3>A budget (Excel), cell by cell</h3><pre><code>$ changelens examples/budget_v1.xlsx examples/budget_v2.xlsx
+CHANGE REPORT
+
+budget_v1.xlsx  -&gt;  budget_v2.xlsx
+
+4 change(s) detected
+
+[HIGH] Number changed  (Budget!B2)
+    Old: 4000
+    New: 5200
+
+[HIGH] Number changed  (Budget!B5)
+    Old: 5700
+    New: 7500
+
+[MEDIUM] New text added  (Budget!B6)
+    New: 600
+
+[LOW] New text added  (Budget!A6)
+    New: Insurance</code></pre><h3>A pitch deck (PowerPoint), including speaker notes</h3><pre><code>$ changelens examples/deck_v1.pptx examples/deck_v2.pptx
+CHANGE REPORT
+
+deck_v1.pptx  -&gt;  deck_v2.pptx
+
+3 change(s) detected
+
+[HIGH] Number changed  (slide 1)
+    Old: Total price: EGP 20,000
+    New: Total price: EGP 26,000
+
+[HIGH] New text added (touches: warranty)  (slide 1 notes)
+    New: Warranty is not included
+
+[MEDIUM] Text removed (touches: warranty)  (slide 1 notes)
+    Old: Mention the warranty period</code></pre><img class="shot" src="contract-report.png" alt="ChangeLens example output"><img class="shot" src="deck-report.png" alt="ChangeLens example output"></section>
+<section><h2>Use it on this page</h2><div class="card"><a class="btn" href="demo.html">Open the live demo</a><div class="mut">Runs in your browser (Python via Pyodide). Works on phones too. Plain text only; documents need the command-line tool.</div></div></section>
+<section id="install"><h2>Install</h2><div class="os">
+<div class="card"><h3>Windows</h3><div class="mut">Install Python 3.9+ from python.org (tick "Add python.exe to PATH"), then in PowerShell:</div>
+<pre><code>py -m pip install git+https://github.com/mohamed-elshamy-ai/changelens
+changelens old.docx new.docx --important --html report.html</code></pre><div><span class="mut"><b>Untested.</b></span> Should work. Only tested on Linux.</div></div>
+<div class="card"><h3>macOS</h3><div class="mut">Python 3.9+ (<code>brew install python</code> or python.org), then in Terminal:</div>
+<pre><code>python3 -m pip install git+https://github.com/mohamed-elshamy-ai/changelens
+changelens old.docx new.docx --important --html report.html</code></pre><div><span class="mut"><b>Untested.</b></span> Should work. Only tested on Linux.</div></div>
+<div class="card"><h3>Linux</h3><div class="mut">Python 3.9+ is usually installed. In a terminal:</div>
+<pre><code>python3 -m pip install --user git+https://github.com/mohamed-elshamy-ai/changelens
+changelens old.docx new.docx --important --html report.html</code></pre><div><span class="ok"><b>Tested.</b></span> Tested on Linux (Python 3.10).</div></div>
+<div class="card"><h3>Android</h3><div><span class="ok"><b>Tested.</b></span> Use the live demo in your phone browser (paste two texts). The command-line version on Termux is untested.</div></div>
+</div></section>
 <section><h2>How it works</h2><ol><li>Extract the text of both files.</li><li>Match each block with its most similar block in the other version (Excel by cell address).</li><li>Judge each difference: numbers, obligation words, negations, key legal and money words.</li><li>Report in the terminal, JSON or HTML.</li></ol>
 <div class="card rtl"><b>الشرح بالعربي</b><p>بتاخد نسختين من نفس الملف وبتطلعلك التغييرات الفعلية بدرجة خطورة. لو رقم اتغير أو كلمة التزام اتخففت (shall بقت may) أو اتضاف بند فيه غرامة أو إلغاء بيتصنف HIGH. تغيير الحروف أو التنسيق بس بيتصنف FORMAT ويختفي في وضع --important. بقواعد واضحة من غير AI.</p></div></section>
-<section><h2>Limits</h2><div class="card warn"><ul><li>Severity is a rule-based guess, not legal advice. Read the HIGH items yourself.</li><li>No OCR for scanned documents and no PowerPoint yet.</li><li>Moved paragraphs show up as one removed and one added block.</li><li>No desktop window yet.</li></ul></div></section>
+<section><h2>Honest limits</h2><div class="card warn"><ul><li>Severity is a rule-based guess, not legal advice. Read the HIGH items yourself.</li><li>Moved clauses are detected when the text is nearly identical or the clause label matches. A moved and heavily rewritten paragraph with no label can still show as removed plus added.</li><li>No OCR for scanned documents. PowerPoint compares text, tables and notes, not images or charts.</li><li>The live demo is plain text only. No desktop window yet.</li></ul></div></section>
 </main>
-<footer><img src="author.jpg" alt="Mohamed Elshamy" width="64" height="64" style="border-radius:50%;border:2px solid #34405c;display:block;margin:0 auto 10px"> Built by <a style="color:var(--acc)" href="https://github.com/mohamed-elshamy-ai">Mohamed Elshamy</a>. Early release (v0.1.0). Issues and pull requests are welcome on <a style="color:var(--acc)" href="https://github.com/mohamed-elshamy-ai/changelens">GitHub</a>.</footer>
+<footer><img src="author.jpg" alt="Mohamed Elshamy" width="64" height="64">Built by <a href="https://github.com/mohamed-elshamy-ai">Mohamed Elshamy</a>. Issues and pull requests are welcome on <a href="https://github.com/mohamed-elshamy-ai/changelens">GitHub</a>.</footer>
 </body></html>

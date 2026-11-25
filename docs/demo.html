@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChangeLens live demo</title>
+<style>
+body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#fbfaf7;color:#1d2433}
+.wrap{max-width:1000px;margin:0 auto;padding:20px}
+h1{font-family:Georgia,serif;margin:.2em 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.cols{grid-template-columns:1fr}}
+textarea{width:100%;height:230px;font:14px/1.4 ui-monospace,monospace;padding:10px;border:1px solid #d9d5c8;border-radius:8px;background:#fff}
+button{background:#1f4fd8;color:#fff;border:0;border-radius:8px;padding:11px 22px;font-size:1rem;font-weight:600;margin:12px 8px 12px 0;cursor:pointer}
+button.alt{background:#fff;color:#1d2433;border:1px solid #d9d5c8}
+#status{color:#6a7388}label{display:inline-flex;gap:6px;align-items:center;margin-right:10px}
+iframe{width:100%;height:520px;border:1px solid #e3e0d6;border-radius:10px;background:#f6f7f9}
+a{color:#1f4fd8}
+</style></head><body><div class="wrap">
+<h1>ChangeLens live demo</h1>
+<p>Paste two versions of a text. The comparison runs <b>in your browser</b> (Python via Pyodide); your text is not uploaded anywhere. This demo handles plain text only. For Word, PDF, Excel and PowerPoint use the <a href="index.html#install">command-line tool</a>. <a href="index.html">Back</a></p>
+<div class="cols"><div><b>Old version</b><textarea id="a"></textarea></div><div><b>New version</b><textarea id="b"></textarea></div></div>
+<button id="go" disabled>Loading Python...</button><label><input type="checkbox" id="imp"> What's Important? (hide formatting only)</label><button class="alt" id="ex">Load example</button>
+<div id="status"></div><iframe id="out" title="report"></iframe>
+</div>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+const A=`1. Services. The Contractor shall deliver the website by 1 March 2027.
+2. Payment. The Client shall pay each invoice within 30 days.
+3. Revisions. The Client may request up to three rounds of revisions.
+4. Confidentiality. Both parties keep project information confidential.
+5. Term. This agreement is governed by Egyptian law.`;
+const B=`1. Services. The Contractor may deliver the website by 1 March 2027.
+2. Payment. The Client shall pay each invoice within 15 days.
+3. Revisions. The Client may request up to one round of revisions.
+4. CONFIDENTIALITY. Both parties keep project information confidential.
+5. Term. This agreement is governed by Egyptian law.
+6. Cancellation. If the Client cancels, a penalty of 20% of the contract price applies.`;
+const $=id=>document.getElementById(id);
+$('ex').onclick=()=>{$('a').value=A;$('b').value=B};
+$('ex').onclick();
+let py;
+(async()=>{
+  try{
+    py=await loadPyodide();
+    py.FS.mkdir('/app');py.FS.mkdir('/app/changelens');
+    for(const f of ['__init__','compare','rules','extract','report']){
+      const r=await fetch('py/changelens/'+f+'.py');py.FS.writeFile('/app/changelens/'+f+'.py',await r.text());
+    }
+    py.runPython("import sys; sys.path.insert(0,'/app')");
+    $('go').disabled=false;$('go').textContent='Compare';if(location.hash==='#autorun')$('go').click();
+  }catch(e){$('status').textContent='Could not load Python in this browser: '+(e.message||JSON.stringify(e,Object.getOwnPropertyNames(e)))}
+})();
+$('go').onclick=()=>{
+  py.FS.writeFile('/tmp/a.txt',$('a').value);py.FS.writeFile('/tmp/b.txt',$('b').value);
+  py.globals.set('imp',$('imp').checked);
+  const html=py.runPython(`
+from changelens.compare import compare
+from changelens.report import html_report
+ch = compare('/tmp/a.txt','/tmp/b.txt', important_only=bool(imp))
+html_report('Old -> New', ch)
+`);
+  $('out').srcdoc=html;$('status').textContent='Done.';
+};
+</script></body></html>
