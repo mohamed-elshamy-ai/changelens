@@ -21,7 +21,7 @@ def extract(path):
                     out.append((f"table {ti + 1} row {ri + 1}", " | ".join(cells)))
         return "text", out
     if ext == ".pdf":
-        import fitz
+        import pymupdf as fitz
         out = []
         with fitz.open(path) as doc:
             for pno, page in enumerate(doc, 1):
