@@ -133,3 +133,8 @@ OCR for scanned documents, desktop window, optional LLM explanation of changes.
 ## License
 
 MIT
+
+## Similar tools (honest comparison)
+
+Document comparison tools exist, including [docdiff](https://github.com/tschnorpfeil/docdiff), [DocumentDiffCheck](https://github.com/NickZaitsev/DocumentDiffCheck), [redline-summarizer](https://github.com/noamrazbuilds/redline-summarizer) and [contract-diff](https://github.com/AlperNab/contract-diff), some of them AI-based. ChangeLens differs by running fully offline with no AI service, by labelling each change by type (for example number or obligation wording), and by a browser demo that runs without uploading your file. It does not do semantic comparison.
+
