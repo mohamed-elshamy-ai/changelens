@@ -15,10 +15,9 @@ a{color:#1f4fd8}
 <h1>ChangeLens live demo</h1>
 <p>Paste two versions of a text. The comparison runs <b>in your browser</b> (Python via Pyodide); your text is not uploaded anywhere. This demo handles plain text only. For Word, PDF, Excel and PowerPoint use the <a href="index.html#install">command-line tool</a>. <a href="index.html">Back</a></p>
 <div class="cols"><div><b>Old version</b><textarea id="a"></textarea></div><div><b>New version</b><textarea id="b"></textarea></div></div>
-<button id="go" disabled>Loading Python...</button><label><input type="checkbox" id="imp"> What's Important? (hide formatting only)</label><button class="alt" id="ex">Load example</button>
+<button id="go">Load engine and compare (about 10 MB, first time only)</button><label><input type="checkbox" id="imp"> What's Important? (hide formatting only)</label><button class="alt" id="ex">Load example</button>
 <div id="status"></div><iframe id="out" title="report"></iframe>
 </div>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <script>
 const A=`1. Services. The Contractor shall deliver the website by 1 March 2027.
 2. Payment. The Client shall pay each invoice within 30 days.
@@ -34,27 +33,40 @@ const B=`1. Services. The Contractor may deliver the website by 1 March 2027.
 const $=id=>document.getElementById(id);
 $('ex').onclick=()=>{$('a').value=A;$('b').value=B};
 $('ex').onclick();
-let py;
-(async()=>{
+// The Python engine runs in a Web Worker so the page never freezes while it loads.
+const workerSrc=`
+let py=null;
+async function boot(base){
+  importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
+  py=await loadPyodide();
+  py.FS.mkdir('/app');py.FS.mkdir('/app/changelens');
+  for(const f of ['__init__','compare','rules','extract','report']){
+    const r=await fetch(base+'py/changelens/'+f+'.py');py.FS.writeFile('/app/changelens/'+f+'.py',await r.text());
+  }
+  py.runPython("import sys; sys.path.insert(0,'/app')");
+}
+onmessage=async e=>{
   try{
-    py=await loadPyodide();
-    py.FS.mkdir('/app');py.FS.mkdir('/app/changelens');
-    for(const f of ['__init__','compare','rules','extract','report']){
-      const r=await fetch('py/changelens/'+f+'.py');py.FS.writeFile('/app/changelens/'+f+'.py',await r.text());
+    if(e.data.type==='run'){
+      if(!py){postMessage({type:'status',text:'Downloading the Python engine (about 10 MB)...'});await boot(e.data.base);}
+      postMessage({type:'status',text:'Comparing...'});
+      py.FS.writeFile('/tmp/a.txt',e.data.a);py.FS.writeFile('/tmp/b.txt',e.data.b);
+      py.globals.set('imp',e.data.imp);
+      const html=py.runPython("from changelens.compare import compare\\nfrom changelens.report import html_report\\nch = compare('/tmp/a.txt','/tmp/b.txt', important_only=bool(imp))\\nhtml_report('Old -> New', ch)");
+      postMessage({type:'done',html});
     }
-    py.runPython("import sys; sys.path.insert(0,'/app')");
-    $('go').disabled=false;$('go').textContent='Compare';if(location.hash==='#autorun')$('go').click();
-  }catch(e){$('status').textContent='Could not load Python in this browser: '+(e.message||JSON.stringify(e,Object.getOwnPropertyNames(e)))}
-})();
+  }catch(err){postMessage({type:'error',text:String(err&&err.message||err)})}
+};`;
+let w=null;
 $('go').onclick=()=>{
-  py.FS.writeFile('/tmp/a.txt',$('a').value);py.FS.writeFile('/tmp/b.txt',$('b').value);
-  py.globals.set('imp',$('imp').checked);
-  const html=py.runPython(`
-from changelens.compare import compare
-from changelens.report import html_report
-ch = compare('/tmp/a.txt','/tmp/b.txt', important_only=bool(imp))
-html_report('Old -> New', ch)
-`);
-  $('out').srcdoc=html;$('status').textContent='Done.';
+  if(!w)w=new Worker(URL.createObjectURL(new Blob([workerSrc],{type:'text/javascript'})));
+  $('go').disabled=true;$('status').textContent='Starting...';
+  w.onmessage=e=>{
+    if(e.data.type==='status')$('status').textContent=e.data.text;
+    if(e.data.type==='done'){$('out').srcdoc=e.data.html;$('status').textContent='Done. Edit the text and press the button again (it is instant now).';$('go').disabled=false;$('go').textContent='Compare';}
+    if(e.data.type==='error'){$('status').textContent='Could not run Python in this browser: '+e.data.text;$('go').disabled=false;}
+  };
+  w.postMessage({type:'run',a:$('a').value,b:$('b').value,imp:$('imp').checked,base:new URL('.',location.href).href});
 };
+if(location.hash==='#autorun')$('go').click();
 </script></body></html>
