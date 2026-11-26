@@ -1,55 +1,75 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ChangeLens: Someone sent the updated version. See what actually changed.</title><meta name="description" content="Compare two versions of a contract or document and see which changes matter, with severity.">
 <meta property="og:title" content="ChangeLens"><meta property="og:description" content="Compare two versions of a contract or document and see which changes matter, with severity.">
 <style>
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font:16px/1.65 var(--body);background:var(--bg);color:var(--fg)}
-.wrap{max-width:900px;margin:0 auto;padding:0 22px}
-a{color:var(--acc)}code,pre{font-family:ui-monospace,Menlo,Consolas,monospace}
-pre{background:var(--code);color:var(--codefg);border:1px solid var(--line);border-radius:var(--r);padding:16px;overflow:auto;font-size:.86rem;line-height:1.5}
-.btn{display:inline-block;padding:11px 22px;border-radius:var(--r);background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none;margin:4px 8px 4px 0}
-.btn.alt{background:transparent;color:var(--fg);border:1px solid var(--line)}
-:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
-section{padding:26px 0}h2{font-family:var(--head);font-size:1.5rem;margin:0 0 14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;margin:10px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.grid .card{margin:0}
+:root{--bg:#fdfcf8;--fg:#16202f;--mut:#5d6677;--card:#ffffff;--line:#d9d4c5;--acc:#16202f;--accfg:#fdfcf8;--red:#c4251a;--ins:#137a4b;--code:#f4f1e8;--codefg:#16202f;--warn:#c4251a;--arabic:'IBM Plex Sans Arabic',sans-serif;--r:2px;
+--body:'Source Sans 3','IBM Plex Sans Arabic',system-ui,sans-serif;--head:'Newsreader','IBM Plex Sans Arabic',Georgia,serif;
+--ease-spring:cubic-bezier(.22,1.36,.32,1);--ease-out:cubic-bezier(.16,1,.3,1)}
+body{margin:0;font:17px/1.65 var(--body);background:var(--bg);color:var(--fg);counter-reset:sec;background-image:linear-gradient(90deg,transparent 0 calc(50% - 470px),rgba(196,37,26,.28) calc(50% - 470px) calc(50% - 469px),transparent calc(50% - 469px))}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px}
+a{color:var(--fg);text-decoration-color:var(--red);text-underline-offset:3px}
+code,pre{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}
+pre{background:var(--code);color:var(--codefg);border:1px solid var(--line);border-left:4px solid var(--fg);border-radius:var(--r);padding:16px;overflow:auto;font-size:.82rem;line-height:1.55}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 22px;background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none;margin:4px 10px 4px 0;border:2px solid var(--acc);border-radius:var(--r);transition:transform .2s var(--ease-spring),box-shadow .2s var(--ease-out),background .2s}
+.btn.alt{background:transparent;color:var(--fg);border-color:var(--fg)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--red)}.btn:active{transform:none;box-shadow:none}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+section{padding:34px 0;border-top:1px solid var(--line)}
+h2{font-family:var(--head);font-size:1.9rem;line-height:1.15;margin:0 0 16px;font-weight:700}
+main section>h2:first-child:before{counter-increment:sec;content:"\00a7" counter(sec) "  ";color:var(--red);font-weight:500;margin-inline-end:.15em}
+h3{font-family:var(--head);font-size:1.15rem;margin:22px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;margin:10px 0;transition:border-color .25s var(--ease-out),transform .25s var(--ease-out)}
+.card:hover{border-color:var(--fg);transform:translateY(-2px)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;border:1px solid var(--fg);background:var(--card)}
+.grid .card{margin:0;border:0;border-inline-end:1px solid var(--line);border-radius:0}
+.grid .card b{font-family:var(--head);font-size:1.15rem;display:block;margin-bottom:4px}
 .mut{color:var(--mut)}.rtl{direction:rtl;text-align:right}
-img.shot{max-width:100%;border-radius:var(--r);border:1px solid var(--line);margin:8px 0}
-.warn{border-left:5px solid var(--warn)}
-.os{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.os h3{margin:0 0 6px;font-size:1rem}.os pre{margin:6px 0}
-footer{padding:44px 0 60px;color:var(--mut);text-align:center;font-size:.9rem}
-footer img{border-radius:50%;border:2px solid var(--line);display:block;margin:0 auto 10px}
-.badge{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:99px;border:1px solid var(--line);color:var(--mut);margin-left:6px;vertical-align:middle}
-.ok{color:#2e9e5b}.no{color:#c0392b}
-
-:root{--bg:#fbfaf7;--fg:#1d2433;--mut:#6a7388;--card:#ffffff;--line:#e3e0d6;--acc:#1f4fd8;--accfg:#fff;--code:#f3f1ea;--codefg:#1d2433;--warn:#d68910;--arabic:'IBM Plex Sans Arabic',sans-serif;--r:10px;--body:'Source Sans 3','IBM Plex Sans Arabic',system-ui,sans-serif;--head:'Newsreader','IBM Plex Sans Arabic',system-ui,sans-serif}
-header.hero{padding:76px 0 36px;text-align:center;background:linear-gradient(90deg,#fdecea 0 50%,#e9f7ef 50% 100%)}
-h1{font-family:var(--head);font-size:clamp(2.1rem,8.5vw,3.4rem);overflow-wrap:break-word;margin:0 0 6px;letter-spacing:-1px}.tag{font-size:1.2rem;color:#40485c;max-width:620px;margin:0 auto 22px}
-header.hero .btn.alt{background:#fff}
-
-/* design tokens: motion */
-:root{--ease-spring:cubic-bezier(.22,1.36,.32,1);--ease-out:cubic-bezier(.16,1,.3,1);--dur-m:.55s;--dur-s:.8s}
-/* Arabic: real family, no letter-spacing, taller lines */
-[dir="rtl"],[lang="ar"]{font-family:var(--arabic);letter-spacing:0;line-height:1.75}
-/* one orchestrated entrance: staggered hero reveal */
-@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.hero .wrap>*{animation:rise var(--dur-s) var(--ease-out) both}
-.hero .wrap>*:nth-child(1){animation-delay:.05s}.hero .wrap>*:nth-child(2){animation-delay:.15s}.hero .wrap>*:nth-child(3){animation-delay:.25s}.hero .wrap>*:nth-child(4){animation-delay:.34s}.hero .wrap>*:nth-child(5){animation-delay:.42s}
-/* micro-interactions */
-.btn{transition:transform .2s var(--ease-spring),box-shadow .2s var(--ease-out)}
-.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(0) scale(.97)}
-.card{transition:border-color .25s var(--ease-out),transform .25s var(--ease-out)}
-.card:hover{border-color:var(--acc);transform:translateY(-2px)}
-@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-
-/* language toggle */
-.langtoggle{display:inline-flex;gap:4px;margin:0 0 14px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:4px}
-.langtoggle button{border:0;background:transparent;color:var(--mut);font:inherit;font-weight:600;min-height:44px;padding:8px 20px;border-radius:99px;cursor:pointer;transition:background .2s var(--ease-out),color .2s var(--ease-out)}
-.langtoggle button[aria-pressed="true"]{background:var(--acc);color:var(--accfg)}
+img.shot{max-width:100%;border:1px solid var(--fg);margin:10px 0;box-shadow:6px 6px 0 var(--line)}
+.warn{border-left:5px solid var(--red)}
+.os{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.os h3{margin:0 0 6px;font-size:1.05rem}.os pre{margin:6px 0}
+.ok{color:var(--ins)}.no{color:var(--red)}
+footer{padding:44px 0 60px;color:var(--mut);text-align:center;font-size:.92rem;border-top:2px solid var(--fg)}
+/* hero: redline */
+header.hero{padding:64px 0 48px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:44px;align-items:center}
+.eyebrow{font:500 .76rem/1 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:0 0 14px}
+h1{font-family:var(--head);font-weight:700;font-size:clamp(2.5rem,7.5vw,4.6rem);line-height:1;letter-spacing:-.02em;margin:0 0 18px;overflow-wrap:break-word}
+h1 del{position:relative;text-decoration:none;color:var(--red)}
+h1 del:after{content:"";position:absolute;inset-inline:-2%;top:54%;height:.07em;background:var(--red);transform-origin:left;transform:scaleX(0);animation:strike .5s .7s var(--ease-out) forwards}
+h1 ins{text-decoration:none;color:var(--ins);border-bottom:.06em solid var(--ins);opacity:0;animation:fade .5s 1.15s var(--ease-out) forwards}
+.tag{font-size:1.25rem;color:#3a4558;max-width:30rem;margin:0 0 22px}
+.meta{font-size:.9rem;color:var(--mut);margin-top:16px}
+.redcard{background:var(--card);border:2px solid var(--fg);box-shadow:8px 8px 0 var(--fg)}
+.redcard .bar{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;border-bottom:2px solid var(--fg);font:500 .72rem 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:var(--code)}
+.chg{padding:13px 16px;border-bottom:1px solid var(--line);font-size:.97rem}
+.chg:last-child{border-bottom:0}
+.sev{display:inline-block;font:600 .68rem 'IBM Plex Mono',monospace;letter-spacing:.08em;padding:2px 7px;margin-inline-end:8px;color:#fff;background:var(--red)}
+.sev.m{background:#a86a00}
+.chg del{color:var(--red);text-decoration:line-through;text-decoration-thickness:2px}
+.chg ins{color:var(--ins);text-decoration:none;border-bottom:2px solid var(--ins);font-weight:600}
+.chg small{display:block;color:var(--mut);margin-top:3px}
+.chg{opacity:0;animation:rise .7s var(--ease-out) forwards}
+.chg:nth-child(2){animation-delay:.5s}.chg:nth-child(3){animation-delay:.7s}.chg:nth-child(4){animation-delay:.9s}
+@keyframes strike{to{transform:scaleX(1)}}@keyframes fade{to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.hero .wrap>div:first-child>*{animation:rise .8s var(--ease-out) both}
+.hero .wrap>div:first-child>*:nth-child(2){animation-delay:.08s}.hero .wrap>div:first-child>*:nth-child(3){animation-delay:.16s}.hero .wrap>div:first-child>*:nth-child(4){animation-delay:.24s}.hero .wrap>div:first-child>*:nth-child(5){animation-delay:.3s}
+@media (max-width:820px){.hero .wrap{grid-template-columns:1fr;gap:30px}header.hero{padding-top:40px}body{background-image:none}.redcard{box-shadow:5px 5px 0 var(--fg)}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}h1 del:after{transform:scaleX(1)}h1 ins,.chg{opacity:1}}
+[dir="rtl"],[lang="ar"]{font-family:var(--arabic);letter-spacing:0;line-height:1.8}
+.langtoggle{display:inline-flex;gap:0;margin:0 0 16px;border:2px solid var(--fg)}
+.langtoggle button{border:0;background:transparent;color:var(--fg);font:inherit;font-weight:600;min-height:44px;min-width:44px;padding:8px 20px;cursor:pointer;transition:background .2s var(--ease-out),color .2s var(--ease-out)}
+.langtoggle button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 </style></head><body>
-<header class="hero"><div class="wrap"><h1>ChangeLens</h1><p class="tag">Someone sent the updated version. See what actually changed.</p>
+<header class="hero"><div class="wrap"><div><p class="eyebrow">Document comparison, offline</p><h1>Someone sent the <del>updated</del> <ins>edited</ins> version.</h1><p class="tag">See what actually changed, and which changes matter.</p>
 <a class="btn" href="https://github.com/mohamed-elshamy-ai/changelens">View on GitHub</a><a class="btn alt" href="demo.html">Live demo</a><a class="btn alt" href="#install">Install</a>
-<p class="mut" style="margin-top:16px">Open source &middot; MIT license &middot; early release v0.1.0</p></div></header>
+<p class="meta">Open source &middot; MIT license &middot; early release v0.1.0</p></div>
+<aside class="redcard" aria-label="Example report"><div class="bar"><span>contract_v1.docx &rarr; v2</span><span>4 changes</span></div>
+<div class="chg"><span class="sev">HIGH</span>Each invoice is due within <del>30</del> <ins>15</ins> days<small>Number changed, paragraph 5</small></div>
+<div class="chg"><span class="sev">HIGH</span>Up to <del>three</del> <ins>one</ins> round of revisions<small>Number changed, paragraph 6</small></div>
+<div class="chg"><span class="sev">HIGH</span><ins>If the Client cancels after work has started, a penalty of 30% of the total fee applies.</ins><small>New text, touches fee, penalty, cancellation</small></div>
+<div class="chg"><span class="sev m">MEDIUM</span>Ownership clause moved and rewritten<small>Moved from paragraph 7 to 8</small></div></aside></div></header>
 <main class="wrap">
 <section><div class="grid"><div class="card"><b>Severity per change</b><div class="mut">HIGH, MEDIUM, LOW or FORMAT, with the reason.</div></div><div class="card"><b>Understands moves and number words</b><div class="mut">&#x27;three&#x27; equals 3, moved clauses are one change.</div></div><div class="card"><b>Word, PDF, Excel, PowerPoint, text</b><div class="mut">Excel cell by cell, slides with notes.</div></div><div class="card"><b>Arabic aware</b><div class="mut">Arabic digits and key Arabic legal words.</div></div></div></section>
 <section><h2>What it does</h2><p>ChangeLens compares two versions of a document and reports each change with a severity and a reason, not a raw diff. A number that changed, a duty softened from shall to may, a new penalty clause: those are HIGH. A &quot;What&#x27;s Important?&quot; mode hides formatting-only changes.</p></section>
