@@ -1,5 +1,7 @@
 # ChangeLens
 
+[![tests](https://github.com/mohamed-elshamy-ai/changelens/actions/workflows/tests.yml/badge.svg)](https://github.com/mohamed-elshamy-ai/changelens/actions/workflows/tests.yml) ![tests: 19 passing](https://img.shields.io/badge/tests-19%20passing-brightgreen) ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
+
 **Someone sent you "the updated version". What actually changed?**
 
 ChangeLens compares two versions of a document and reports each change with a severity (HIGH, MEDIUM, LOW) and a short reason, instead of dumping a raw diff. A "What's Important?" mode hides formatting-only and trivial changes.
