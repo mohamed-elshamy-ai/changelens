@@ -41,6 +41,11 @@ header.hero .btn.alt{background:#fff}
 .card{transition:border-color .25s var(--ease-out),transform .25s var(--ease-out)}
 .card:hover{border-color:var(--acc);transform:translateY(-2px)}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* language toggle */
+.langtoggle{display:inline-flex;gap:4px;margin:0 0 14px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:4px}
+.langtoggle button{border:0;background:transparent;color:var(--mut);font:inherit;font-weight:600;min-height:44px;padding:8px 20px;border-radius:99px;cursor:pointer;transition:background .2s var(--ease-out),color .2s var(--ease-out)}
+.langtoggle button[aria-pressed="true"]{background:var(--acc);color:var(--accfg)}
 </style></head><body>
 <header class="hero"><div class="wrap"><h1>ChangeLens</h1><p class="tag">Someone sent the updated version. See what actually changed.</p>
 <a class="btn" href="https://github.com/mohamed-elshamy-ai/changelens">View on GitHub</a><a class="btn alt" href="demo.html">Live demo</a><a class="btn alt" href="#install">Install</a>
@@ -117,9 +122,24 @@ changelens old.docx new.docx --important --html report.html</code></pre><div><sp
 changelens old.docx new.docx --important --html report.html</code></pre><div><span class="ok"><b>Tested.</b></span> Tested on Linux (Python 3.10).</div></div>
 <div class="card"><h3>Android</h3><div><span class="ok"><b>Tested.</b></span> Use the live demo in your phone browser (paste two texts). The command-line version on Termux is untested.</div></div>
 </div></section>
-<section><h2>How it works</h2><ol><li>Extract the text of both files.</li><li>Match each block with its most similar block in the other version (Excel by cell address).</li><li>Judge each difference: numbers, obligation words, negations, key legal and money words.</li><li>Report in the terminal, JSON or HTML.</li></ol>
-<div class="card" dir="rtl" lang="ar" style="text-align:start"><b>الشرح بالعربي</b><p>بتاخد نسختين من نفس الملف وبتطلعلك التغييرات الفعلية بدرجة خطورة. لو رقم اتغير أو كلمة التزام اتخففت (shall بقت may) أو اتضاف بند فيه غرامة أو إلغاء بيتصنف HIGH. تغيير الحروف أو التنسيق بس بيتصنف FORMAT ويختفي في وضع --important. بقواعد واضحة من غير AI.</p></div></section>
+<section class="how-section"><h2><span class="lang-en">How it works</span><span class="lang-ar" hidden>إزاي بيشتغل</span></h2><div class="langtoggle" role="group" aria-label="Language / اللغة"><button type="button" data-lang="en" aria-pressed="true">English</button><button type="button" data-lang="ar" aria-pressed="false">العربية</button></div><div class="lang-en"><ol><li>Extract the text of both files.</li><li>Match each block with its most similar block in the other version (Excel by cell address).</li><li>Judge each difference: numbers, obligation words, negations, key legal and money words.</li><li>Report in the terminal, JSON or HTML.</li></ol>
+</div><div class="card lang-ar" dir="rtl" lang="ar" style="text-align:start"><b>الشرح بالعربي</b><p>بتاخد نسختين من نفس الملف وبتطلعلك التغييرات الفعلية بدرجة خطورة. لو رقم اتغير أو كلمة التزام اتخففت (shall بقت may) أو اتضاف بند فيه غرامة أو إلغاء بيتصنف HIGH. تغيير الحروف أو التنسيق بس بيتصنف FORMAT ويختفي في وضع --important. بقواعد واضحة من غير AI.</p></div></section>
 <section><h2>Honest limits</h2><div class="card warn"><ul><li>Severity is a rule-based guess, not legal advice. Read the HIGH items yourself.</li><li>Moved clauses are detected when the text is nearly identical or the clause label matches. A moved and heavily rewritten paragraph with no label can still show as removed plus added.</li><li>No OCR for scanned documents. PowerPoint compares text, tables and notes, not images or charts.</li><li>The live demo is plain text only. No desktop window yet.</li></ul></div></section>
 </main>
 <footer>Built by <a href="https://github.com/mohamed-elshamy-ai">Mohamed Elshamy</a>. Issues and pull requests are welcome on <a href="https://github.com/mohamed-elshamy-ai/changelens">GitHub</a>.</footer>
-</body></html>
+<script>
+(function(){
+ var KEY='site-lang';
+ function apply(lang){
+  document.querySelectorAll('.lang-en').forEach(function(e){e.hidden=lang!=='en'});
+  document.querySelectorAll('.lang-ar').forEach(function(e){e.hidden=lang!=='ar'});
+  document.querySelectorAll('.langtoggle button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.lang===lang?'true':'false')});
+  document.querySelectorAll('.how-section').forEach(function(s){s.dir=lang==='ar'?'rtl':'ltr'});
+  try{localStorage.setItem(KEY,lang)}catch(e){}
+ }
+ var def=(navigator.language||'en').toLowerCase().indexOf('ar')===0?'ar':'en';
+ var saved=null; try{saved=localStorage.getItem(KEY)}catch(e){}
+ apply(saved||def);
+ document.querySelectorAll('.langtoggle button').forEach(function(b){b.addEventListener('click',function(){apply(b.dataset.lang)})});
+})();
+</script></body></html>
