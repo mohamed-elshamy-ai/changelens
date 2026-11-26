@@ -41,14 +41,28 @@ def extract(path):
                         out.append((f"slide {n} notes", t.strip()))
         return "text", out
     if ext == ".pdf":
-        import pymupdf as fitz
+        import pypdfium2 as pdfium
         out = []
-        with fitz.open(path) as doc:
-            for pno, page in enumerate(doc, 1):
-                for b in page.get_text("blocks"):
-                    t = " ".join(b[4].split())
-                    if t:
-                        out.append((f"page {pno}", t))
+        doc = pdfium.PdfDocument(path)
+        try:
+            for pno in range(len(doc)):
+                page = doc[pno]
+                tp = page.get_textpage()
+                text = tp.get_text_range()
+                tp.close()
+                page.close()
+                # pdfium returns lines, not blocks: join lines into paragraphs,
+                # starting a new one after a blank line or a line that ends a sentence.
+                para = []
+                for line in text.replace("\r", "").split("\n") + [""]:
+                    line = " ".join(line.split())
+                    if line:
+                        para.append(line)
+                    if para and (not line or line[-1] in ".!?:;\u061f"):
+                        out.append((f"page {pno + 1}", " ".join(para)))
+                        para = []
+        finally:
+            doc.close()
         return "text", out
     if ext == ".xlsx":
         import openpyxl

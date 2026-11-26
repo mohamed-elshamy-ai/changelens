@@ -12,6 +12,9 @@ Runs offline. No AI model: severity comes from readable rules in [`changelens/ru
 
 **Live demo in your browser (works on phones):** https://mohamed-elshamy-ai.github.io/changelens/demo.html (plain text only, nothing is uploaded).
 
+
+PDF reading uses [pypdfium2](https://github.com/pypdfium2-team/pypdfium2) (Apache-2.0 / BSD, PDFium). No AGPL code is installed.
+
 ## Supported files
 
 `.txt` `.md` `.docx` `.pdf` `.xlsx` `.pptx` (slide text, tables and speaker notes). Both files must be the same family (two text documents, or two spreadsheets).
