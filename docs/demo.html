@@ -41,14 +41,18 @@ async function boot(base){
   py=await loadPyodide();
   py.FS.mkdir('/app');py.FS.mkdir('/app/changelens');
   for(const f of ['__init__','compare','rules','extract','report']){
-    const r=await fetch(base+'py/changelens/'+f+'.py');py.FS.writeFile('/app/changelens/'+f+'.py',await r.text());
+    const r=await fetch(base+'py/changelens/'+f+'.py');
+    if(!r.ok)throw new Error('file '+f+'.py failed to load (HTTP '+r.status+')');
+    const t=await r.text();
+    if(t.trimStart().startsWith('<'))throw new Error('file '+f+'.py came back as a web page, not Python');
+    py.FS.writeFile('/app/changelens/'+f+'.py',t);
   }
   py.runPython("import sys; sys.path.insert(0,'/app')");
 }
 onmessage=async e=>{
   try{
     if(e.data.type==='run'){
-      if(!py){postMessage({type:'status',text:'Downloading the Python engine (about 10 MB)...'});await boot(e.data.base);}
+      if(!py){postMessage({type:'status',text:'First run: downloading the Python engine (about 10 MB, once; your browser keeps it after). Everything runs on your device - your text is never uploaded.'});await boot(e.data.base);}
       postMessage({type:'status',text:'Comparing...'});
       py.FS.writeFile('/tmp/a.txt',e.data.a);py.FS.writeFile('/tmp/b.txt',e.data.b);
       py.globals.set('imp',e.data.imp);
