@@ -1,9 +1,7 @@
-# ChangeLens: technical notes / الشرح التقني
-
-## English
+# ChangeLens: technical notes
 
 **Modules**
-- `extract.py`: turns a file into blocks `(location, text)`. Word: paragraphs and table rows (python-docx). PDF: text blocks per page (PyMuPDF). PowerPoint: shape text, tables, speaker notes per slide (python-pptx). Excel: one block per cell, keyed by address (openpyxl). Returns kind `text` (ordered) or `cells` (keyed).
+- `extract.py`: turns a file into blocks `(location, text)`. Word: paragraphs and table rows (python-docx). PDF: text per page (pypdfium2), lines joined into paragraphs. PowerPoint: shape text, tables, speaker notes per slide (python-pptx). Excel: one block per cell, keyed by address (openpyxl). Returns kind `text` (ordered) or `cells` (keyed).
 - `compare.py`: alignment and judging.
 - `rules.py`: word lists (English and Arabic), obligation strength table, number extraction (digits, Arabic digits, number words).
 - `report.py`: terminal and HTML output. `cli.py`: command line.
@@ -24,15 +22,3 @@
 **Testing** (19 tests, `pytest`): each rule on small inputs, all five file types built on the fly, moves, number words, Arabic digits, CLI exit codes and HTML output, and the real sample files in `examples/` (outputs are saved next to them).
 
 **Limits**: see the README. In short: severity is a guess, no OCR, PowerPoint images and charts are ignored, a moved and heavily rewritten paragraph without a label can show as removed plus added.
-
-## بالعربي
-
-**الأجزاء**: `extract.py` بيحول الملف لفقرات بمكانها (Word وPDF وPowerPoint وExcel بالخلية). `compare.py` بيطابق ويحكم. `rules.py` فيه قوائم الكلمات (إنجليزي وعربي) وقوة كلمات الالتزام واستخراج الأرقام (أرقام عربية وكلمات زي three). `report.py` للتقرير.
-
-**الخوارزمية**: (١) مقارنة الفقرات بالترتيب بـ difflib. (٢) جوه المنطقة المتغيرة كل فقرة قديمة بتتزاوج مع أشبه فقرة جديدة (تشابه ٥٠٪ فأكتر) أو مع نفس رقم البند. (٣) مرور تاني بيدمج المحذوف والمضاف في "نقل" لو متشابهين ٨٥٪ أو نفس رقم البند. (٤) الحكم: أرقام اتغيرت، كلمة التزام اتخففت (shall إلى may)، نفي، كلمات قانونية أو مالية، أو إعادة كتابة كبيرة. تغيير الحروف أو التنسيق بس = FORMAT. (٥) Excel بيتقارن بعنوان الخلية.
-
-**قرارات التصميم**: قواعد مش AI عشان النتيجة تتكرر وتتفسر وتشتغل أوفلاين وكل تصنيف معاه سبب. الحذر الأكبر على الأرقام والالتزامات لأنها اللي بتكلف فلوس. نفس الكود بيشتغل في المتصفح عن طريق Pyodide.
-
-**الاختبار**: ١٩ اختبار pytest على القواعد وكل أنواع الملفات والنقل والأرقام العربية وأكواد الخروج، وعلى ملفات `examples/` الحقيقية.
-
-**الحدود**: في الـ README. الخطورة تقدير، مفيش OCR، صور PowerPoint ما بتتقارنش، وفقرة اتنقلت واتكتبت من جديد بدون رقم بند ممكن تظهر محذوفة ومضافة.

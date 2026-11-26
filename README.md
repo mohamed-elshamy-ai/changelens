@@ -12,7 +12,6 @@ Runs offline. No AI model: severity comes from readable rules in [`changelens/ru
 
 **Live demo in your browser (works on phones):** https://mohamed-elshamy-ai.github.io/changelens/demo.html (plain text only, nothing is uploaded).
 
-
 PDF reading uses [pypdfium2](https://github.com/pypdfium2-team/pypdfium2) (Apache-2.0 / BSD, PDFium). No AGPL code is installed.
 
 ## Supported files
@@ -111,11 +110,7 @@ Tested on Linux only. Android: use the live demo in the phone browser (plain tex
    - only case, spacing or punctuation changed: FORMAT (hidden by `--important`)
 4. **Report** in the terminal, JSON or a styled HTML page.
 
-### الشرح بالعربي
-
-الأداة بتاخد نسختين من نفس الملف (عقد، Word، PDF، Excel) وبتطلعلك التغييرات الفعلية مش بس فرق نصوص. بتستخرج النص، وبتطابق كل فقرة بالنسخة اللي تقابلها، وبعدين بتحكم على كل فرق بقواعد واضحة: لو رقم اتغير (مثلاً ٣٠ يوم بقت ١٥) أو كلمة التزام اتخففت (يجب/shall بقت يجوز/may) أو اتضافت أو اتشالت كلمة نفي أو بند فيه دفع أو غرامة أو إلغاء، ده بيتصنف HIGH. التغيير في حروف كبيرة وصغيرة أو تنسيق بس بيتصنف FORMAT ويختفي لما تستخدم `--important`. مفيش AI ولا إنترنت.
-
-## Limits
+## Limitations
 
 - Severity is a guess from patterns. It can miss an important change and can rate a harmless one HIGH. It is not legal advice. Read the HIGH items yourself.
 - Moved paragraphs are detected when the text is nearly identical (85% similar) or the clause label (such as "6. Ownership") matches. A paragraph that was moved and heavily rewritten with no matching label still shows as one removed and one added block.
@@ -131,7 +126,7 @@ Tested on Linux only. Android: use the live demo in the phone browser (plain tex
 pip install -e ".[dev]" && pytest
 ```
 
-## Roadmap (not built)
+## Roadmap (not yet built)
 
 OCR for scanned documents, desktop window, optional LLM explanation of changes.
 
@@ -139,7 +134,6 @@ OCR for scanned documents, desktop window, optional LLM explanation of changes.
 
 MIT
 
-## Similar tools (honest comparison)
+## Related tools
 
 Document comparison tools exist, including [docdiff](https://github.com/tschnorpfeil/docdiff), [DocumentDiffCheck](https://github.com/NickZaitsev/DocumentDiffCheck), [redline-summarizer](https://github.com/noamrazbuilds/redline-summarizer) and [contract-diff](https://github.com/AlperNab/contract-diff), some of them AI-based. ChangeLens differs by running fully offline with no AI service, by labelling each change by type (for example number or obligation wording), and by a browser demo that runs without uploading your file. It does not do semantic comparison.
-
