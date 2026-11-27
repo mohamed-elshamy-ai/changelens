@@ -1,6 +1,6 @@
 # ChangeLens
 
-[![tests](https://github.com/Hamasa-ElShamy/changelens/actions/workflows/tests.yml/badge.svg)](https://github.com/Hamasa-ElShamy/changelens/actions/workflows/tests.yml) ![tests: 21 passing](https://img.shields.io/badge/tests-21%20passing-brightgreen) ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
+[![tests](https://github.com/hamasa-lshmn/changelens/actions/workflows/tests.yml/badge.svg)](https://github.com/hamasa-lshmn/changelens/actions/workflows/tests.yml) ![tests: 21 passing](https://img.shields.io/badge/tests-21%20passing-brightgreen) ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 **Someone sent you "the updated version". What actually changed?**
 
@@ -10,7 +10,7 @@ Runs offline. No AI model: severity comes from readable rules in [`changelens/ru
 
 ![report](demo/report.png)
 
-**Live demo in your browser (works on phones):** https://hamasa-elshamy.github.io/changelens/demo.html (plain text only, nothing is uploaded).
+**Live demo in your browser (works on phones):** https://hamasa-lshmn.github.io/changelens/demo.html (plain text only, nothing is uploaded).
 
 PDF reading uses [pypdfium2](https://github.com/pypdfium2-team/pypdfium2) (Apache-2.0 / BSD, PDFium). No AGPL code is installed.
 
@@ -21,7 +21,7 @@ PDF reading uses [pypdfium2](https://github.com/pypdfium2-team/pypdfium2) (Apach
 ## Install and use
 
 ```bash
-git clone https://github.com/Hamasa-ElShamy/changelens
+git clone https://github.com/hamasa-lshmn/changelens
 cd changelens
 pip install -e .
 
@@ -89,12 +89,12 @@ changelens examples/contract_v1.docx examples/contract_v2.docx
 Needs Python 3.9 or newer. On Windows install it from python.org and tick "Add python.exe to PATH".
 
 ```bash
-# Windows (PowerShell):  py -m pip install git+https://github.com/Hamasa-ElShamy/changelens
-# macOS:                 python3 -m pip install git+https://github.com/Hamasa-ElShamy/changelens
-# Linux:                 python3 -m pip install --user git+https://github.com/Hamasa-ElShamy/changelens
+# Windows (PowerShell):  py -m pip install git+https://github.com/hamasa-lshmn/changelens
+# macOS:                 python3 -m pip install git+https://github.com/hamasa-lshmn/changelens
+# Linux:                 python3 -m pip install --user git+https://github.com/hamasa-lshmn/changelens
 ```
 
-Tested on Linux only. Android: use the live demo in the phone browser (plain text only). Technical notes (architecture, algorithms, testing): [ARCHITECTURE.md](ARCHITECTURE.md). Website: https://hamasa-elshamy.github.io/changelens/
+Tested on Linux only. Android: use the live demo in the phone browser (plain text only). Technical notes (architecture, algorithms, testing): [ARCHITECTURE.md](ARCHITECTURE.md). Website: https://hamasa-lshmn.github.io/changelens/
 
 ## How it works
 
