@@ -58,7 +58,7 @@ def _first_words(s, n=8):
 def _judge_modified(old, new, loc):
     if _loose(old) == _loose(new):
         return Change(Severity.FORMAT, "format", "Formatting, case or punctuation only", loc, old, new)
-    on, nn = rules.numbers(old), rules.numbers(new)
+    on, nn = rules.numbers(_nocite(old)), rules.numbers(_nocite(new))
     ot, nt = _tokens(old), _tokens(new)
     sm = difflib.SequenceMatcher(None, ot, nt, autojunk=False)
     removed, added = [], []
@@ -91,11 +91,16 @@ def _judge_modified(old, new, loc):
         reasons.append("touches: " + ", ".join(sorted(kw_changed)[:4]))
         sev = max(sev, Severity.MEDIUM if sev < Severity.MEDIUM else sev)
     ratio = sm.ratio()
-    if sev == Severity.LOW and ratio < 0.7:
+    if sev == Severity.LOW and ratio < 0.7 and min(len(ot), len(nt)) >= 6 and len(removed) > 0:
         reasons.append("mostly rewritten")
         sev = Severity.MEDIUM
     title = "; ".join(reasons) if reasons else "Wording changed"
     return Change(sev, "modified", title[0].upper() + title[1:], loc, old, new)
+
+
+def _nocite(t):
+    """Reference markers such as [12] or [3, 4] change when a paper's reference list moves. They are not facts in the text."""
+    return re.sub(r"\[\d+(?:\s*[,\u2013-]\s*\d+)*\]", " ", t)
 
 
 def _judge_block(kind, text, loc):

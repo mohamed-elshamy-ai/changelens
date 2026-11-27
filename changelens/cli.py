@@ -23,7 +23,12 @@ def main(argv=None):
         print(f"error: {e}", file=sys.stderr)
         return 3
     except Exception as e:
-        print(f"error: could not read files ({type(e).__name__}: {e})", file=sys.stderr)
+        import os
+        bad = [p for p in (a.old, a.new) if not os.path.exists(p)]
+        empty = [p for p in (a.old, a.new) if os.path.isfile(p) and os.path.getsize(p) == 0]
+        if bad: print(f"error: file not found: {', '.join(bad)}", file=sys.stderr)
+        elif empty: print(f"error: file is empty: {', '.join(empty)}", file=sys.stderr)
+        else: print(f"error: could not read the files. They may be damaged, password protected, or not the type their extension says ({type(e).__name__}: {e})", file=sys.stderr)
         return 3
     name = f"{Path(a.old).name}  ->  {Path(a.new).name}"
     if a.json:

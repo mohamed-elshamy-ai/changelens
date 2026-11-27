@@ -158,3 +158,21 @@ def test_rewritten_clause_is_paired_by_label(tmp_path):
     b = write(tmp_path / "b.txt", "6. Ownership. The Freelancer keeps all rights until every invoice and late fee is settled.")
     ch = compare(a, b)
     assert len(ch) == 1 and ch[0].kind == "modified"
+
+
+def test_citation_number_and_short_addition_are_not_high_or_rewrite(tmp_path):
+    from changelens import compare
+    a = tmp_path / "a.txt"; b = tmp_path / "b.txt"
+    a.write_text("Recurrent neural networks, long short-term memory [12] and gated recurrent [7] models have been established.")
+    b.write_text("Recurrent neural networks, long short-term memory [13] and gated recurrent [7] models have been established.")
+    assert all(int(c.severity) < 3 for c in compare(str(a), str(b)))
+    a.write_text("hello"); b.write_text("hello world")
+    assert not any("rewritten" in c.title.lower() for c in compare(str(a), str(b)))
+
+
+def test_missing_and_empty_files_clean_error(tmp_path):
+    import subprocess, sys
+    e = tmp_path / "e.docx"; e.write_bytes(b"")
+    for p in (tmp_path / "missing.docx", e):
+        r = subprocess.run([sys.executable, "-m", "changelens.cli", str(p), str(p)], capture_output=True, text=True)
+        assert r.returncode != 0 and "PackageNotFound" not in r.stderr and "error:" in r.stderr
