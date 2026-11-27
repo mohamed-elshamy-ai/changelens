@@ -1,6 +1,6 @@
 # ChangeLens
 
-[![tests](https://github.com/mohamed-elshamy-ai/changelens/actions/workflows/tests.yml/badge.svg)](https://github.com/mohamed-elshamy-ai/changelens/actions/workflows/tests.yml) ![tests: 19 passing](https://img.shields.io/badge/tests-19%20passing-brightgreen) ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
+[![tests](https://github.com/mohamed-elshamy-ai/changelens/actions/workflows/tests.yml/badge.svg)](https://github.com/mohamed-elshamy-ai/changelens/actions/workflows/tests.yml) ![tests: 21 passing](https://img.shields.io/badge/tests-21%20passing-brightgreen) ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 **Someone sent you "the updated version". What actually changed?**
 
